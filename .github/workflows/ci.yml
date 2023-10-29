@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - dev
   pull_request:
     branches:
       - main
@@ -20,7 +19,7 @@ jobs:
     strategy:
       matrix:
         target: [NUCLEO_F303RE]
-        profile: [release, debug, develop]
+        profile: [debug]
         
 
     steps:
