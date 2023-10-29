@@ -19,7 +19,7 @@ jobs:
     strategy:
       matrix:
         target: [NUCLEO_F303RE]
-        profile: [release, debug, develop]
+        profile: [debug]
         
 
     steps:
