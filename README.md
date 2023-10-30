@@ -1,7 +1,7 @@
 ![](./resources/official_armmbed_bomberman_badge.png)
 # Mbed Bomberman
 
-[![GitHub Actions](https://github.com/ssferraz/mbed-bomberman/workflows/CI/badge.svg)](https://github.com/ssferraz/mbed-bomberman/actions)
+[![GitHub Actions](https://github.com/ssferraz/mbed-bomberman/workflows/CI/badge.svg)](https://github.com/ssferraz/mbed-bomberman/actions) ![Repository size](https://img.shields.io/github/repo-size/ssferraz/mbed-bomberman)
 
 ## Application functionality
 
