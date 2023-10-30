@@ -5,14 +5,14 @@
 
 ## Application functionality
 
-O jogo "Mbed Bomberman" é uma versão simplificada do clássico jogo Bomberman, com as seguintes regras:
+The "Mbed Bomberman" game is a simplified version of the classic Bomberman game, with the following rules:
 
-- Dois jogadores competem no jogo.
-- Cada jogador pode soltar apenas uma bomba por vez.
-- O tabuleiro é fixo e deve ter um tamanho mínimo de 76x72.
-- Os personagens dos jogadores têm um tamanho de 2x2.
-- As bombas têm o mesmo tamanho de 2x2.
-- Quando uma bomba explode, ela cria uma explosão que tem tambanho máximo da linhaxcoluna.
+- Two players compete in the game.
+- Each player can only drop one bomb at a time.
+- The board is fixed and must have a minimum size of 76x72.
+- Player characters are 2x2 in size.
+- The bombs are the same 2x2 size.
+- When a bomb explodes, it creates an explosion that also has a rowxcolumn maximum.
 
 ## Building and running
 
