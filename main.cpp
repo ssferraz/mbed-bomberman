@@ -1,23 +1,21 @@
 #include "mbed.h"
 #include <iostream>
 
-#define BLINKING_RATE     1000ms
+#define BOARD_WIDTH 76
+#define BOARD_HEIGHT 72
+#define PLAYER_SIZE 2
+#define BOMB_SIZE 2
+#define EXPLOSION_SIZE BOARD_WIDTH
+#define BLINKING_RATE 100ms
 
-#define WIDTH 76
-#define HEIGHT 72
-#define SIZE 2
-#define BOMB 2
-#define EXPLOSION WIDTH
+AnalogIn joystickXPlayer1(PA_7);
+AnalogIn joystickYPlayer1(PA_6);
+AnalogIn joystickXPlayer2(PC_0);
+AnalogIn joystickYPlayer2(PC_1);
 
-AnalogIn joyX1(PC_0);
-AnalogIn joyY1(PC_1);
-AnalogIn joyX2(PA_7);
-AnalogIn joyY2(PA_6);
+DigitalIn button(PC_14);
 
-DigitalIn btn1(PC_14);
-DigitalIn btn2(PB_10);
-
-char board[HEIGHT][WIDTH];
+char board[BOARD_HEIGHT][BOARD_WIDTH];
 
 struct Player {
     int x, y;
@@ -30,79 +28,79 @@ struct Bomb {
     bool exploded;
 };
 
-Player p1 = {2, 2, false};
-Player p2 = {WIDTH - 3, HEIGHT - 3, false};
+Player player1 = {2, 2, false};
+Player player2 = {BOARD_WIDTH - 3, BOARD_HEIGHT - 3, false};
 Bomb bomb = {0, 0, 0, false};
 
-void initBoard() {
+void initializeBoard() {
     memset(board, ' ', sizeof(board));
 
-    for (int i = 0; i < HEIGHT; ++i) {
+    for (int i = 0; i < BOARD_HEIGHT; ++i) {
         board[i][0] = '#';
-        board[i][WIDTH - 1] = '#';
+        board[i][BOARD_WIDTH - 1] = '#';
     }
-    for (int j = 0; j < WIDTH; ++j) {
+    for (int j = 0; j < BOARD_WIDTH; ++j) {
         board[0][j] = '#';
-        board[HEIGHT - 1][j] = '#';
+        board[BOARD_HEIGHT - 1][j] = '#';
     }
 
-    for (int i = 4; i < HEIGHT - 4; ++i) {
-        for (int j = 4; j < WIDTH - 4; ++j) {
+    for (int i = 4; i < BOARD_HEIGHT - 4; ++i) {
+        for (int j = 4; j < BOARD_WIDTH - 4; ++j) {
             if (i % 2 == 0 && j % 2 == 0) {
                 board[i][j] = '#';
             }
         }
     }
 
-    board[p1.y][p1.x] = 'P';
-    board[p2.y][p2.x] = 'P';
+    board[player1.y][player1.x] = 'P';
+    board[player2.y][player2.x] = 'P';
 }
 
-void plantBomb(Player &player) {
+void placeBomb(Player &player) {
     if (!player.hasBomb) {
         bomb.x = player.x;
         bomb.y = player.y;
-        bomb.explosionSize = EXPLOSION;
+        bomb.explosionSize = EXPLOSION_SIZE;
         bomb.exploded = false;
         player.hasBomb = true;
     }
 }
 
-void igniteBomb() {
+void explodeBomb() {
     if (bomb.exploded) {
         return;
     }
 
-    if (p1.x >= bomb.x && p1.x < bomb.x + BOMB &&
-        p1.y >= bomb.y && p1.y < bomb.y + BOMB) {
-        printf("Jogador 1 se deu mal! Jogo acabou.\n");
+    if (player1.x >= bomb.x && player1.x < bomb.x + BOMB_SIZE &&
+        player1.y >= bomb.y && player1.y < bomb.y + BOMB_SIZE) {
+        printf("Jogador 1 foi atingido pela explosao da bomba! Jogo encerrado.\n");
     }
 
-    if (p2.x >= bomb.x && p2.x < bomb.x + BOMB &&
-        p2.y >= bomb.y && p2.y < bomb.y + BOMB) {
-        printf("Jogador 2 se deu mal! Jogo acabou.\n");
+    if (player2.x >= bomb.x && player2.x < bomb.x + BOMB_SIZE &&
+        player2.y >= bomb.y && player2.y < bomb.y + BOMB_SIZE) {
+        printf("Jogador 2 foi atingido pela explosao da bomba! Jogo encerrado.\n");
     }
 
     for (int i = bomb.x - 1; i >= bomb.x - bomb.explosionSize && i >= 0; --i) {
         board[bomb.y][i] = 'Y';
     }
-    for (int i = bomb.x + BOMB; i <= bomb.x + bomb.explosionSize && i < WIDTH; ++i) {
+    for (int i = bomb.x + BOMB_SIZE; i <= bomb.x + bomb.explosionSize && i < BOARD_WIDTH; ++i) {
         board[bomb.y][i] = 'Y';
     }
 
     for (int i = bomb.y - 1; i >= bomb.y - bomb.explosionSize && i >= 0; --i) {
         board[i][bomb.x] = 'Y';
     }
-    for (int i = bomb.y + BOMB; i <= bomb.y + bomb.explosionSize && i < HEIGHT; ++i) {
+    for (int i = bomb.y + BOMB_SIZE; i <= bomb.y + bomb.explosionSize && i < BOARD_HEIGHT; ++i) {
         board[i][bomb.x] = 'Y';
     }
 
     bomb.exploded = true;
 }
 
-void showBoard() {
-    for (int i = 0; i < HEIGHT; ++i) {
-        for (int j = 0; j < WIDTH; ++j) {
+void printBoard() {
+    for (int i = 0; i < BOARD_HEIGHT; ++i) {
+        for (int j = 0; j < BOARD_WIDTH; ++j) {
             if (board[i][j] == 'Y') {
                 std::cout << "\033[1;33m" << board[i][j] << "\033[0m";
             } else {
@@ -113,79 +111,67 @@ void showBoard() {
     }
 }
 
-bool pressButton1() {
-    return !btn1;
+bool buttonPressed() {
+    return !button;
 }
 
-bool pressButton2() {
-    return !btn2;
-}
-
-bool inExplosion(Player player, Bomb bomb) {
+bool isPlayerInsideExplosion(Player player, Bomb bomb) {
     return player.x >= bomb.x && player.x < bomb.x + bomb.explosionSize &&
            player.y >= bomb.y && player.y < bomb.y + bomb.explosionSize;
 }
 
+void movePlayer(Player &player, float xValue, float yValue) {
+    float angle = atan2(yValue - 0.5, xValue - 0.5);
+    int dx = static_cast<int>(cos(angle) * 2);
+    int dy = static_cast<int>(sin(angle) * 2);
+
+    int newPlayerX = player.x + dx;
+    int newPlayerY = player.y + dy;
+
+    if (board[newPlayerY][newPlayerX] != '#' &&
+        board[newPlayerY + PLAYER_SIZE - 1][newPlayerX + PLAYER_SIZE - 1] != '#') {
+        board[player.y][player.x] = ' ';
+        player.x = newPlayerX;
+        player.y = newPlayerY;
+        board[player.y][player.x] = 'P';
+    }
+}
+
 int main() {
-    initBoard();
+    
+    initializeBoard();
 
     while (true) {
-        float xJoy1 = joyX1.read();
-        float yJoy1 = joyY1.read();
-        float aJoy1 = atan2(yJoy1 - 0.5, xJoy1 - 0.5);
+        float xValuePlayer1 = joystickXPlayer1.read();
+        float yValuePlayer1 = joystickYPlayer1.read();
 
-        int dxJoy1 = static_cast<int>(cos(aJoy1) * 2);
-        int dyJoy1 = static_cast<int>(sin(aJoy1) * 2);
+        movePlayer(player1, xValuePlayer1, yValuePlayer1);
 
-        int nxJoy1 = p1.x + dxJoy1;
-        int nyJoy1 = p1.y + dyJoy1;
+        float xValuePlayer2 = joystickXPlayer2.read();
+        float yValuePlayer2 = joystickYPlayer2.read();
+        movePlayer(player2, xValuePlayer2, yValuePlayer2);
 
-        if (board[nyJoy1][nxJoy1] != '#' &&
-            board[nyJoy1 + SIZE - 1][nxJoy1 + SIZE - 1] != '#') {
-            board[p1.y][p1.x] = ' ';
-            p1.x = nxJoy1;
-            p1.y = nyJoy1;
-            board[p1.y][p1.x] = 'P';
+        if (buttonPressed() && !player1.hasBomb) {
+            placeBomb(player1);
+        }
+        if (buttonPressed() && !player2.hasBomb) {
+            placeBomb(player2);
         }
 
-        float xJoy2 = joyX2.read();
-        float yJoy2 = joyY2.read();
-        float aJoy2 = atan2(yJoy2 - 0.5, xJoy2 - 0.5);
+        explodeBomb();
 
-        int dxJoy2 = static_cast<int>(cos(aJoy2) * 2);
-        int dyJoy2 = static_cast<int>(sin(aJoy2) * 2);
-
-        int nxJoy2 = p2.x + dxJoy2;
-        int nyJoy2 = p2.y + dyJoy2;
-
-        if (board[nyJoy2][nxJoy2] != '#' &&
-            board[nyJoy2 + SIZE - 1][nxJoy2 + SIZE - 1] != '#') {
-            board[p2.y][p2.x] = ' ';
-            p2.x = nxJoy2;
-            p2.y = nyJoy2;
-            board[p2.y][p2.x] = 'P';
-        }
-
-        if (pressButton1() && !p1.hasBomb) {
-            plantBomb(p1);
-        }
-        if (pressButton2() && !p2.hasBomb) {
-            plantBomb(p2);
-        }
-
-        igniteBomb();
-
-        if (inExplosion(p1, bomb) && !p1.hasBomb) {
-            printf("Jogador 1 se deu mal! Jogo acabou.\n");
+        if (isPlayerInsideExplosion(player1, bomb) && !player1.hasBomb) {
+            printf("Jogador 1 foi atingido pela explosao da bomba! Jogo encerrado.\n");
             break;
         }
-        if (inExplosion(p2, bomb) && !p2.hasBomb) {
-            printf("Jogador 2 se deu mal! Jogo acabou.\n");
+        if (isPlayerInsideExplosion(player2, bomb) && !player2.hasBomb) {
+            printf("Jogador 2 foi atingido pela explosao da bomba! Jogo encerrado.\n");
             break;
         }
 
-        showBoard();
+        printBoard();
 
+        
         ThisThread::sleep_for(BLINKING_RATE);
     }
 
