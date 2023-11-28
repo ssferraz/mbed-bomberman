@@ -2,11 +2,11 @@
 #include <iostream>
 
 #define BOARD_WIDTH 76
-#define BOARD_HEIGHT 72
+#define BOARD_HEIGHT 48
 #define PLAYER_SIZE 2
 #define BOMB_SIZE 2
 #define EXPLOSION_SIZE BOARD_WIDTH
-#define BLINKING_RATE 100ms
+#define BLINKING_RATE 10ms
 
 AnalogIn joystickXPlayer1(PA_7);
 AnalogIn joystickYPlayer1(PA_6);
@@ -99,6 +99,7 @@ void explodeBomb() {
 }
 
 void printBoard() {
+   /* std::cout  << "\033[2J" << std::endl;*/
     for (int i = 0; i < BOARD_HEIGHT; ++i) {
         for (int j = 0; j < BOARD_WIDTH; ++j) {
             if (board[i][j] == 'Y') {
@@ -107,7 +108,7 @@ void printBoard() {
                 std::cout << board[i][j];
             }
         }
-        std::cout << std::endl;
+        std::cout << "\n";
     }
 }
 
@@ -138,7 +139,7 @@ void movePlayer(Player &player, float xValue, float yValue) {
 }
 
 int main() {
-    
+    BufferedSerial pc(USBTX, USBRX, 384000); 
     initializeBoard();
 
     while (true) {
