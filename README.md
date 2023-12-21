@@ -3,6 +3,8 @@
 
 [![GitHub Actions](https://github.com/ssferraz/mbed-bomberman/workflows/CI/badge.svg)](https://github.com/ssferraz/mbed-bomberman/actions) ![Repository size](https://img.shields.io/github/repo-size/ssferraz/mbed-bomberman)
 
+![](./resources/mbed-bomberman.png)
+
 ## Application functionality
 
 The "Mbed Bomberman" game is a simplified version of the classic Bomberman game, with the following rules:
@@ -25,6 +27,12 @@ The "Mbed Bomberman" game is a simplified version of the classic Bomberman game,
     ```
     
 Alternatively, you can manually copy the binary to the board, which you mount on the host computer over USB.
+
+### Team members
+
+- [@ssferraz](https://github.com/ssferraz) Samuel Ferraz
+- [@otaviotrk](https://github.com/otaviotrk) Otávio
+- [@jerickleandro](https://github.com/jerickleandro) Erick Leandro
 
 ### License and contributions
 
