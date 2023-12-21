@@ -5,6 +5,12 @@
 
 ![](./resources/mbed-bomberman.png)
 
+## Team members
+
+- [@ssferraz](https://github.com/ssferraz) Samuel Ferraz
+- [@otaviotrk](https://github.com/otaviotrk) Otávio
+- [@jerickleandro](https://github.com/jerickleandro) Erick Leandro
+
 ## Application functionality
 
 The "Mbed Bomberman" game is a simplified version of the classic Bomberman game, with the following rules:
@@ -15,6 +21,10 @@ The "Mbed Bomberman" game is a simplified version of the classic Bomberman game,
 - Player characters are 2x2 in size.
 - The bombs are the same 2x2 size.
 - When a bomb explodes, it creates an explosion that also has a rowxcolumn maximum.
+
+## Technologies
+
+The project utilized the STM32 NUCLEO-F303RE board by STMicroelectronics, incorporating two analog modules for the manipulation of players. The application was developed in the C++ programming language, with implementation and compilation carried out using Mbed Studio.
 
 ## Building and running
 
@@ -27,12 +37,6 @@ The "Mbed Bomberman" game is a simplified version of the classic Bomberman game,
     ```
     
 Alternatively, you can manually copy the binary to the board, which you mount on the host computer over USB.
-
-### Team members
-
-- [@ssferraz](https://github.com/ssferraz) Samuel Ferraz
-- [@otaviotrk](https://github.com/otaviotrk) Otávio
-- [@jerickleandro](https://github.com/jerickleandro) Erick Leandro
 
 ### License and contributions
 
