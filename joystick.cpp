@@ -2,14 +2,14 @@
 #include "joystick.h"
 
 Joystick::Joystick(PinName xPin, PinName yPin, PinName buttonPin)
-    : x(xPin), y(yPin), button(buttonPin, PullUp) {}
+    : VRx(xPin), VRy(yPin), button(buttonPin, PullUp) {}
 
 float Joystick::readX() {
-    return x.read();
+    return VRx.read();
 }
 
 float Joystick::readY() {
-    return y.read();
+    return VRy.read();
 }
 
 bool Joystick::isButtonPressed() {

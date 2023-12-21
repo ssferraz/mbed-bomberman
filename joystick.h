@@ -5,7 +5,8 @@
 #include "mbed.h"
 
 class Joystick {
-    AnalogIn x, y;
+private: 
+    AnalogIn VRx, VRy;
     DigitalIn button;
 
 public:
